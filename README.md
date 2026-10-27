@@ -34,12 +34,6 @@ List the skills without installing:
 bunx skills add slime21023/CodingStandard-skills --list
 ```
 
-Install from a local checkout:
-
-```bash
-bunx skills add /path/to/CodingStandard-skills
-```
-
 `npx skills add`
 works the same way.
 
