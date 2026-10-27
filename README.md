@@ -19,19 +19,19 @@ how to write, refactor, test, and review code in one language.
 Install every skill in this repository:
 
 ```bash
-bunx skills add <owner>/<repo>
+bunx skills add slime21023/CodingStandard-skills
 ```
 
 Install a single skill:
 
 ```bash
-bunx skills add <owner>/<repo> --skill go-coding-guidelines
+bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines
 ```
 
 List the skills without installing:
 
 ```bash
-bunx skills add <owner>/<repo> --list
+bunx skills add slime21023/CodingStandard-skills --list
 ```
 
 Install from a local checkout:
@@ -40,7 +40,7 @@ Install from a local checkout:
 bunx skills add /path/to/CodingStandard-skills
 ```
 
-Replace `<owner>/<repo>` with this repository's GitHub path. `npx skills add`
+`npx skills add`
 works the same way.
 
 ## Repository Layout
