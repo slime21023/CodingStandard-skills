@@ -83,7 +83,8 @@ Do not introduce unrelated refactoring or new dependencies solely for style.
 - Avoid introducing a design pattern without a concrete need.
 
 ### Refactoring
-- Preserve observable behavior and API contracts.
+- Preserve observable behavior and API contracts, including thrown error
+  types and messages; report any unavoidable change explicitly.
 - Prefer narrow changes that improve naming, branches, or dependencies.
 - Retain necessary stateful and framework patterns.
 
@@ -97,6 +98,9 @@ Do not introduce unrelated refactoring or new dependencies solely for style.
 
 - Use existing project scripts; inspect their meaning before running them.
 - Do not invent commands or change dependencies only to run checks.
+- When the project has no TypeScript configuration (for example a standalone
+  file), type-check the result with `tsc --strict --noEmit` (or
+  `bunx tsc --strict --noEmit`) instead of skipping verification.
 - Review names, nesting, type assertions, error paths, and scope after edits.
 - State which checks passed, failed, or could not be run.
 - Explain justified exceptions instead of silently weakening the standard.
