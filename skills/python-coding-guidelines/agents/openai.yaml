@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Coding Guidelines"
+  short_description: "Readable, typed Python with Result errors and minimal abstractions."
+  default_prompt: "Use $python-coding-guidelines to implement or review this Python code according to my standards."
