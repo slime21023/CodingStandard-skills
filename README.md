@@ -12,6 +12,7 @@ how to write, refactor, test, and review code in one language.
 | `develop-readable-typescript` | TypeScript | Readable, type-safe code; `Result` / discriminated unions for expected failures; exceptions for unexpected ones |
 | `go-coding-guidelines` | Go | Concrete types, small consumer-owned interfaces, explicit errors, safe concurrency |
 | `nim-coding-guidelines` | Nim 2.2+ | Data-oriented modules and public APIs, Result/Option/Exception error handling, metaprogramming, memory management |
+| `python-coding-guidelines` | Python 3.13+ | Functions and immutable data, type hints, Result-based error flows, dataclasses, async programming, minimal abstractions |
 | `rust-coding-guidelines` | Rust 2024+ | Explicit borrowing, concrete types, minimal APIs, traits, unsafe code, async/concurrency |
 | `testing-principles` | Any | Language-agnostic testing: when tests are required, what to cover, deterministic design, test doubles, honest reporting |
 
