@@ -34,8 +34,7 @@ List the skills without installing:
 bunx skills add slime21023/CodingStandard-skills --list
 ```
 
-`npx skills add`
-works the same way.
+`npx skills add` works the same way.
 
 ## Repository Layout
 
