@@ -13,6 +13,7 @@ how to write, refactor, test, and review code in one language.
 | `go-coding-guidelines` | Go | Concrete types, small consumer-owned interfaces, explicit errors, safe concurrency |
 | `nim-coding-guidelines` | Nim 2.2+ | Data-oriented modules and public APIs, Result/Option/Exception error handling, metaprogramming, memory management |
 | `rust-coding-guidelines` | Rust 2024+ | Explicit borrowing, concrete types, minimal APIs, traits, unsafe code, async/concurrency |
+| `testing-principles` | Any | Language-agnostic testing: when tests are required, what to cover, deterministic design, test doubles, honest reporting |
 
 ## Installation
 
