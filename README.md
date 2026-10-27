@@ -7,9 +7,12 @@ how to write, refactor, test, and review code in one language.
 
 | Skill | Language | Focus |
 | --- | --- | --- |
+| `c3-coding-guidelines` | C3 | Data-oriented code, native Optional/Fault errors, allocators and memory safety, FFI, generics, macros |
 | `cpp-coding-guidelines` | C++20 | Data and functions first, explicit ownership and RAII, Expected with appropriate exceptions, CMake-based C++20 Modules |
 | `develop-readable-typescript` | TypeScript | Readable, type-safe code; `Result` / discriminated unions for expected failures; exceptions for unexpected ones |
 | `go-coding-guidelines` | Go | Concrete types, small consumer-owned interfaces, explicit errors, safe concurrency |
+| `nim-coding-guidelines` | Nim 2.2+ | Data-oriented modules and public APIs, Result/Option/Exception error handling, metaprogramming, memory management |
+| `rust-coding-guidelines` | Rust 2024+ | Explicit borrowing, concrete types, minimal APIs, traits, unsafe code, async/concurrency |
 
 ## Installation
 
