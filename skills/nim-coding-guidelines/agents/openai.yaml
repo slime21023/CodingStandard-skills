@@ -1,0 +1,13 @@
+interface:
+  display_name: Nim Coding Guidelines
+  short_description: Readable, data-oriented Nim 2.2 coding and review rules
+  default_prompt: Use $nim-coding-guidelines to implement and review this Nim change.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

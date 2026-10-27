@@ -1,0 +1,4 @@
+interface:
+  display_name: "C3 Coding Guidelines"
+  short_description: "Write and review clear, safe, data-oriented C3 code"
+  default_prompt: "Use $c3-coding-guidelines to implement and validate this C3 change according to our coding standards."

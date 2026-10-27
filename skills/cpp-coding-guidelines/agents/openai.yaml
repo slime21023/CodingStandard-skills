@@ -1,0 +1,4 @@
+interface:
+  display_name: "C++ Coding Guidelines"
+  short_description: "C++20、Modules、RAII 與 Expected 的可執行編程規範"
+  default_prompt: "Use $cpp-coding-guidelines to implement or review this C++20 change with explicit ownership, simple functions, and verified Modules compatibility."

@@ -1,0 +1,14 @@
+interface:
+  display_name: Go Coding Guidelines
+  short_description: Clear Go coding, refactoring, testing and reviews
+  default_prompt: Use $go-coding-guidelines to write or review idiomatic Go code with
+    clear errors and minimal abstractions.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

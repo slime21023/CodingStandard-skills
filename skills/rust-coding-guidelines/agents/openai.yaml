@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rust Coding Guidelines"
+  short_description: "Readable Rust with clear ownership, errors, and APIs"
+  default_prompt: "Use $rust-coding-guidelines to implement or review Rust code following concise, safe, idiomatic conventions."
