@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kotlin Coding Guidelines"
+  short_description: "通用 Kotlin v0.3：官方排版、明確語意、適度保守"
+  default_prompt: "Use $kotlin-coding-guidelines to implement or review Kotlin code according to the v0.3 conventions."
