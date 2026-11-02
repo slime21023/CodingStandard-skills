@@ -19,25 +19,86 @@ how to write, refactor, test, and review code in one language.
 
 ## Installation
 
-Install every skill in this repository:
+### 1. Interactive Selection (互動式勾選安裝)
+
+In an interactive terminal, `bunx skills add` launches an interactive menu to choose which skills and target agents to install:
 
 ```bash
+# Remote install from GitHub
 bunx skills add slime21023/CodingStandard-skills
+
+# Local install (from inside this repo)
+bun run install:skills
+# or
+bunx skills add .
 ```
 
-Install a single skill:
+You will be prompted to:
+1. **Select skills**: Toggle specific skills (`Space` to toggle, `Enter` to confirm).
+2. **Select agents**: Choose target AI agents (Claude Code, Cursor, Windsurf, Codex, Antigravity, GitHub Copilot, etc.).
+3. **Scope**: Choose between `Project` (`.agents/skills/`) or `Global` (`~/.<agent>/skills/`).
+
+> **Note for AI IDE Terminals (Cursor, Antigravity, etc.)**:
+> When running inside an AI Agent environment, the default `skills` CLI auto-detects the agent and switches to non-interactive mode (auto-installing all skills). Run `bun run install:skills` or use the CLI flags below to force specific selections.
+
+---
+
+### 2. Selective Installation via Flags (指定特定 Skill 與 Agent)
+
+Install specific skills:
 
 ```bash
-bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines
+bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines python-coding-guidelines
 ```
 
-List the skills without installing:
+Install to specific agents:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills -a claude-code cursor
+```
+
+Install globally across all projects:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills -g
+```
+
+Install all skills to all agents non-interactively:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills --all
+```
+
+---
+
+### 3. List Available Skills (列出可用 Skills)
+
+Preview skills and their descriptions without installing:
 
 ```bash
 bunx skills add slime21023/CodingStandard-skills --list
+# or locally
+bun run skills:list
 ```
 
-`npx skills add` works the same way.
+`npx skills add` works identically if using Node.js / npm.
+
+---
+
+## Repository Scripts
+
+If you cloned this repository locally:
+
+```bash
+# Interactive skill & agent installer (cleans IDE agent flags)
+bun run install:skills
+
+# Validate all skills (frontmatter, naming, and link integrity)
+bun run validate
+
+# List all available skills
+bun run skills:list
+```
 
 ## Repository Layout
 
@@ -48,6 +109,11 @@ skills/
     references/       # Optional: detailed guidelines loaded on demand
     agents/           # Optional: agent interface metadata (openai.yaml)
     assets/           # Optional: icons and other static files
+scripts/
+  install.mjs         # Interactive installer wrapper
+  validate.mjs        # Skill schema and link validator
+package.json          # Node/Bun package definition and scripts
+.gitignore            # Prevents committing local installed agent skills
 ```
 
 ## Adding a Skill
@@ -55,7 +121,7 @@ skills/
 1. Create `skills/<skill-name>/SKILL.md` with frontmatter containing `name`
    (matching the directory) and `description` (when the skill should trigger).
 2. Put long-form rules in `references/` and link to them from `SKILL.md`.
-3. Verify discovery with `bunx skills add . --list`.
+3. Verify discovery with `bun run validate` and `bun run skills:list`.
 
 ## Rule Levels
 
