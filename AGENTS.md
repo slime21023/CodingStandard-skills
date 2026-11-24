@@ -96,4 +96,4 @@ mq '.code("python")' skills/python-coding-guidelines/references/errors.md
 
 ## Authoring
 
-Follow [CONTRIBUTING.md](CONTRIBUTING.md), start from [the topic template](templates/topic.md), and run `bash scripts/check-topics.sh` before committing.
+Follow [CONTRIBUTING.md](CONTRIBUTING.md), start from [the topic template](templates/topic.md), and run the [Python + mq topic checker](CONTRIBUTING.md#checking-topics) before committing.

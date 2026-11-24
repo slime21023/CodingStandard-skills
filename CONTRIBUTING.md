@@ -83,4 +83,12 @@ Use the same scenario for a shared topic when it fits the language. Define only 
 
 Use relative links within the skill. Refer to independently installed skills by name, not by relative link. Update `references/index.md` with exactly one row per topic: `Doc | Summary | Topic | Tags`. Link the title to `<topic>.md`, copy the front matter summary, and put the topic and comma-separated tags in inline code. Match the catalog title `# <Display> Topic Index`.
 
-Run `bash scripts/check-topics.sh` from the repository root before committing. See [mq recipes](AGENTS.md#mq-queries) for retrieval checks.
+## Checking topics
+
+Run the checker from the repository root with Python 3 and `mq` (tested with `mq` 0.9.3) on `PATH`. No Bash or Python packages are required.
+
+```shell
+python3 scripts/check_topics.py
+```
+
+On Windows, use `py -3 scripts/check_topics.py`. Exit status `1` means validation failed; `2` means the command was run outside the repository root or `mq` was unavailable. The checker does not compile snippets. See [mq recipes](AGENTS.md#mq-queries) for retrieval checks.

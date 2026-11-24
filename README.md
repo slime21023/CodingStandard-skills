@@ -53,7 +53,7 @@ skills/
     agents/
     assets/           # Optional
 templates/topic.md
-scripts/check-topics.sh
+scripts/check_topics.py
 CONTRIBUTING.md
 AGENTS.md
 ```
@@ -67,7 +67,7 @@ mq '.yaml | frontmatter | select(self, get("topic") == "errors") | get("id")' sk
 mq -A 'section::by_title("Recommended Pattern")' skills/rust-coding-guidelines/references/errors.md
 ```
 
-See [the mq recipes](AGENTS.md#mq-queries) for PowerShell and queries by tag and section. `bash scripts/check-topics.sh` validates document structure; snippets are marked `unverified` because it does not compile them.
+See [the mq recipes](AGENTS.md#mq-queries) for PowerShell and queries by tag and section. The [topic checker](CONTRIBUTING.md#checking-topics) validates document structure without compiling snippets.
 
 ## Adding a Skill
 
@@ -75,7 +75,7 @@ See [the mq recipes](AGENTS.md#mq-queries) for PowerShell and queries by tag and
    (matching the directory) and `description` (when the skill should trigger).
 2. Create topics from [`templates/topic.md`](templates/topic.md) per
    [`CONTRIBUTING.md`](CONTRIBUTING.md), list them in `references/index.md`,
-   and run `bash scripts/check-topics.sh`.
+   and run the [topic checker](CONTRIBUTING.md#checking-topics).
 3. Verify discovery with `bunx skills add . --list`.
 
 ## Rule Levels
