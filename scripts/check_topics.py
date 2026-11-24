@@ -19,24 +19,93 @@ SKILLS = {
     "nim-coding-guidelines": ("nim", "nim"),
     "testing-principles": ("testing", "any"),
 }
-TOPICS = set("""
-    naming-and-formatting data-and-functions control-flow types null-safety errors
-    modules-and-api abstraction resources-and-memory concurrency unsafe-and-ffi
-    lambdas-and-scope-functions collections-and-idioms testing tooling
-    test-scope test-design test-delivery
-""".split())
-TAGS = set("""
-    naming formatting data functions control-flow types null-safety errors result option
-    exceptions modules public-api interfaces generics metaprogramming classes ownership
-    memory resources concurrency async cancellation unsafe ffi lambdas collections
-    testing tooling dependencies build documentation review
-""".split())
+TOPICS = {
+    "naming-and-formatting",
+    "data-and-functions",
+    "control-flow",
+    "types",
+    "null-safety",
+    "errors",
+    "modules-and-api",
+    "abstraction",
+    "resources-and-memory",
+    "concurrency",
+    "unsafe-and-ffi",
+    "lambdas-and-scope-functions",
+    "collections-and-idioms",
+    "testing",
+    "tooling",
+    "test-scope",
+    "test-design",
+    "test-delivery",
+}
+TAGS = {
+    "naming",
+    "formatting",
+    "data",
+    "functions",
+    "control-flow",
+    "types",
+    "null-safety",
+    "errors",
+    "result",
+    "option",
+    "exceptions",
+    "modules",
+    "public-api",
+    "interfaces",
+    "generics",
+    "metaprogramming",
+    "classes",
+    "ownership",
+    "memory",
+    "resources",
+    "concurrency",
+    "async",
+    "cancellation",
+    "unsafe",
+    "ffi",
+    "lambdas",
+    "collections",
+    "testing",
+    "tooling",
+    "dependencies",
+    "build",
+    "documentation",
+    "review",
+}
 HEADINGS = (
-    "Summary", "When to Use", "Rules", "Dependencies", "Tooling",
-    "Recommended Pattern", "Pitfalls", "Testing", "Checklist", "Related", "References",
+    "Summary",
+    "When to Use",
+    "Rules",
+    "Dependencies",
+    "Tooling",
+    "Recommended Pattern",
+    "Pitfalls",
+    "Testing",
+    "Checklist",
+    "Related",
+    "References",
 )
-REQUIRED = {"Summary", "When to Use", "Rules", "Recommended Pattern", "Pitfalls", "Checklist", "References"}
-METADATA_KEYS = ("id", "title", "summary", "language", "topic", "tags", "related", "snippets")
+REQUIRED = {
+    "Summary",
+    "When to Use",
+    "Rules",
+    "Recommended Pattern",
+    "Pitfalls",
+    "Checklist",
+    "References",
+}
+METADATA_KEYS = (
+    "id",
+    "title",
+    "summary",
+    "language",
+    "topic",
+    "tags",
+    "related",
+    "snippets",
+)
 CODE_TAGS = {"shell", "text", "json", "toml", "yaml", "cmake"}
 RULE_LEVELS = {"MUST", "SHOULD", "AVOID", "REVIEW SIGNAL"}
 DOCUMENT_QUERY = "[frontmatter(first(filter(self, fn(n): is_yaml(n);))), self]"
@@ -45,10 +114,14 @@ DOCUMENT_QUERY = "[frontmatter(first(filter(self, fn(n): is_yaml(n);))), self]"
 def read_document(mq, path):
     result = subprocess.run(
         [mq, "-A", "-F", "json", DOCUMENT_QUERY, path.as_posix()],
-        capture_output=True, encoding="utf-8", check=False,
+        capture_output=True,
+        encoding="utf-8",
+        check=False,
     )
     if result.returncode:
-        raise ValueError(result.stderr.strip() or f"mq exited with status {result.returncode}")
+        raise ValueError(
+            result.stderr.strip() or f"mq exited with status {result.returncode}"
+        )
     metadata, nodes = json.loads(result.stdout)
     return metadata, nodes
 
@@ -76,7 +149,10 @@ def check_metadata(path, metadata, prefix, language, error):
     if tuple(metadata) != METADATA_KEYS:
         error("incorrect front matter keys or key order")
     for key, expected in (
-        ("id", f"{prefix}/{topic}"), ("language", language), ("topic", topic), ("snippets", "unverified"),
+        ("id", f"{prefix}/{topic}"),
+        ("language", language),
+        ("topic", topic),
+        ("snippets", "unverified"),
     ):
         if metadata.get(key) != expected:
             error(f"{key} must be {expected}")
@@ -95,8 +171,14 @@ def check_metadata(path, metadata, prefix, language, error):
         error("related must be an array")
     else:
         for target in related:
-            owner, _, name = target.partition("/") if isinstance(target, str) else ("", "", "")
-            if owner != prefix or name not in TOPICS or not (path.parent / f"{name}.md").is_file():
+            owner, _, name = (
+                target.partition("/") if isinstance(target, str) else ("", "", "")
+            )
+            if (
+                owner != prefix
+                or name not in TOPICS
+                or not (path.parent / f"{name}.md").is_file()
+            ):
                 error(f"unresolved related topic: {target}")
 
 
@@ -128,7 +210,11 @@ def check_sections(path, nodes, language, error):
             if length > 40:
                 error(f"code block has {length} lines (maximum 40)")
 
-    required = REQUIRED if language != "any" else REQUIRED - {"Recommended Pattern", "References"}
+    required = (
+        REQUIRED
+        if language != "any"
+        else REQUIRED - {"Recommended Pattern", "References"}
+    )
     for heading in HEADINGS:
         if heading in required and heading not in sections:
             error(f"missing H2: {heading}")
@@ -136,14 +222,28 @@ def check_sections(path, nodes, language, error):
         if path.stem == topic and heading in sections:
             error(f"unexpected H2 for {topic}: {heading}")
 
-    if path.stem != "tooling" and language != "any" and "Recommended Pattern" in sections:
-        block = next((node for node in sections["Recommended Pattern"] if node["type"] == "Code"), {})
+    if (
+        path.stem != "tooling"
+        and language != "any"
+        and "Recommended Pattern" in sections
+    ):
+        block = next(
+            (
+                node
+                for node in sections["Recommended Pattern"]
+                if node["type"] == "Code"
+            ),
+            {},
+        )
         if block.get("lang") != language:
             error(f"first Recommended Pattern block must use {language}")
         marker = "#" if language in {"python", "nim"} else "//"
         first_line = block.get("value", "").partition("\n")[0]
         comment = marker + " "
-        if not first_line.startswith(comment) or not first_line[len(comment):len(comment) + 1].strip():
+        if (
+            not first_line.startswith(comment)
+            or not first_line[len(comment) : len(comment) + 1].strip()
+        ):
             error(f"first Recommended Pattern block needs a {marker} path comment")
 
     rules = [node for node in sections["Rules"] if node["type"] == "List"]
@@ -151,7 +251,12 @@ def check_sections(path, nodes, language, error):
         error("Rules needs at least one bullet")
     for rule in rules:
         first = next(iter(rule["values"]), {})
-        if rule["ordered"] or rule["level"] or first.get("type") != "Strong" or text(first) not in RULE_LEVELS:
+        if (
+            rule["ordered"]
+            or rule["level"]
+            or first.get("type") != "Strong"
+            or text(first) not in RULE_LEVELS
+        ):
             error("invalid Rules bullet prefix")
     checklist = sum(
         node["type"] == "List" and not node["ordered"] and node["level"] == 0
@@ -181,7 +286,9 @@ def check_topic(mq, path, prefix, language, catalog_lines, errors):
     check_sections(path, nodes, language, error)
     title = metadata.get("title") if isinstance(metadata, dict) else None
     summary = metadata.get("summary") if isinstance(metadata, dict) else None
-    h1 = [text(node) for node in nodes if node["type"] == "Heading" and node["depth"] == 1]
+    h1 = [
+        text(node) for node in nodes if node["type"] == "Heading" and node["depth"] == 1
+    ]
     if not title or h1 != [title]:
         error("expected one H1 matching title")
     for target in links(nodes):
@@ -230,11 +337,15 @@ def main():
                 _, nodes = read_document(mq, index)
                 for target in links(nodes):
                     if target.endswith(".md") and not (directory / target).is_file():
-                        errors.append(f"{index.as_posix()}: unresolved catalog link: {target}")
+                        errors.append(
+                            f"{index.as_posix()}: unresolved catalog link: {target}"
+                        )
             except (OSError, ValueError) as exc:
                 errors.append(f"{index.as_posix()}: cannot inspect catalog: {exc}")
 
-        topics = sorted(path for path in directory.glob("*.md") if path != index and path.is_file())
+        topics = sorted(
+            path for path in directory.glob("*.md") if path != index and path.is_file()
+        )
         if not topics:
             errors.append(f"{directory.as_posix()}: missing topics")
         for path in topics:
