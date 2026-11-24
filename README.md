@@ -1,7 +1,7 @@
 # CodingStandard Skills
 
-Agent skills that encode team coding standards. Each skill tells a coding agent
-how to write, refactor, test, and review code in one language.
+Agent skills that encode team coding standards, with language-specific coding
+guidelines and language-agnostic testing principles.
 
 ## Skills
 
@@ -24,7 +24,7 @@ Each skill ships one-topic-per-file references under `references/`, queryable wi
 Install every skill in this repository:
 
 ```bash
-bunx skills add slime21023/CodingStandard-skills
+bunx skills add slime21023/CodingStandard-skills --skill '*'
 ```
 
 Install a single skill:
