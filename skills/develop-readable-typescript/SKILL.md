@@ -14,66 +14,49 @@ correctness rather than brevity, cleverness, or architectural ceremony.
 
 ## Workflow
 
-1. Inspect relevant files, `package.json`, TypeScript and lint configurations,
-   tests, and applicable repository instructions.
-2. Read [TypeScript guidelines](references/typescript-guidelines.md) before
-   substantive implementation, refactoring, debugging, or review work.
-3. Identify the requested behavior, data contracts, and failure paths.
-4. Make the smallest coherent change that fulfills the task.
-5. Run available type checks, linting, formatting checks, and relevant tests.
-6. Review the diff for readability, safety, and unnecessary scope.
-7. Report what changed, verification results, and any remaining risks.
+1. Inspect relevant files, package and TypeScript configurations, lint setup, tests, and repository instructions.
+2. Select topics from [the topic index](references/index.md) as described in Topic Retrieval.
+3. Identify behavior, data contracts, and failure paths. Make the smallest coherent change within project constraints; do not add dependencies solely for style.
+4. Use available project checks. Inspect script meaning before running them, and review names, side effects, types, promises, errors, tests, and scope.
+5. Report what changed, checks that passed or failed, any unavailable checks, and justified exceptions.
 
-Follow explicit user requirements and established project constraints. Treat
-this skill as a set of defaults where no conflicting requirement exists.
-Do not introduce unrelated refactoring or new dependencies solely for style.
+## Rule Levels
 
-## Readability
+- **MUST**: Required; justify any exception.
+- **SHOULD**: The default; adjust only with a concrete reason.
+- **AVOID**: Not the default; use only when constraints justify it.
 
-- Use meaningful, descriptive names; avoid token-saving abbreviations.
-- Name functions after their actual responsibility and observable side effects.
-- Prefer guard clauses and early returns to deep nesting.
-- Avoid nested ternaries and hard-to-follow chained expressions.
-- Extract conditions only when doing so improves clarity.
-- Treat nesting depth and function length as review signals, not hard limits.
-- Prefer simple, explicit logic over shorter but less readable code.
+## Core Rules
 
-## Type Safety and Data
+- **MUST** Preserve strict mode and public contracts.
+- **MUST** Do not use any, assertions, or non-null assertions to evade checks.
+- **MUST** Validate external input at runtime.
+- **SHOULD** Prefer data and functions; use classes for state, lifecycle, or framework contracts.
+- **MUST** Use Result or discriminated unions for expected failures, and exceptions for unexpected ones.
+- **MUST** Await, return, or explicitly handle every Promise.
+- **SHOULD** Use guard clauses; avoid nested ternaries.
+- **MUST** Verify with the project checks, or use tsc --strict --noEmit without a project configuration.
 
-- Preserve TypeScript strictness and the project's public contracts.
-- Prefer inference for obvious local values and explicit boundary types.
-- Avoid `any`, unsafe `as` assertions, and non-null `!` assertions;
-  justify narrowly scoped exceptions.
-- Treat external input as untrusted; validate at runtime when necessary.
-- Prefer discriminated unions for finite states and `readonly` contracts
-  for data that must not be modified.
-- Avoid complex type-level abstractions without concrete benefits.
+## Topic Retrieval
 
-## Architecture
+1. Open [references/index.md](references/index.md) and choose at most three topics by summary and tags.
+2. Read each selected topic's `Summary`, `Rules`, and `Checklist` first.
+3. Read `Recommended Pattern` when writing code, `Pitfalls` when reviewing or debugging, and `Tooling` or `Dependencies` when changing build or dependency setup.
+4. Follow `related` IDs only when the selected topics do not answer the task.
+5. Never load every topic file.
 
-- Prefer plain data structures and functions for domain logic.
-- Keep pure transformations distinct from I/O and shared mutable state.
-- Prefer composition over inheritance and avoid speculative layers.
-- Use classes when state ownership, resource lifetime, framework contracts
-  (including web components), or error types make them appropriate.
-- Avoid classes that merely group static helpers or functions.
-- Keep modules cohesive, with minimal exports and no unnecessary wrappers.
-- Prefer ES modules and type-only imports for type-only dependencies.
-- Respect existing architecture unless the task warrants changing it.
+## Extract Only What You Need
 
-## Failures and Async Work
+If `mq` is available, run these from this skill's directory:
 
-- Model expected, recoverable operation failures as `Result<T, E>` or
-  discriminated unions with structured errors.
-- Use discriminated unions for finite application states.
-- Propagate unexpected failures with exceptions; do not swallow them.
-- Catch and translate only errors a boundary can meaningfully handle.
-- Classify network and storage failures by the public contract and whether
-  callers can recover; do not blindly convert all exceptions to Result.
-- Await, return, or deliberately handle every Promise.
-- Prefer `async`/`await` for multi-step asynchronous flows.
-- Use `Promise<Result<T, E>>` when async operations have expected failures.
-- Do not wrap infallible helpers in Result or catch/rethrow without purpose.
+```shell
+mq -A 'section::by_title("Rules")' references/errors.md
+mq -A 'section::by_title("Checklist")' references/errors.md
+mq '.code("typescript")' references/errors.md
+mq '.yaml | frontmatter | select(self, get("tags") | contains("errors")) | get("id")' references/*.md
+```
+
+Without `mq`, open only the selected files or heading ranges. Do not install tools to read these references.
 
 ## Task-Specific Checks
 
@@ -93,17 +76,3 @@ Do not introduce unrelated refactoring or new dependencies solely for style.
   unhandled Promises, unnecessary abstractions, and missing tests.
 - Give actionable findings with precise locations and reasons.
 - Distinguish material defects from optional stylistic suggestions.
-
-## Verification and Handoff
-
-- Use existing project scripts; inspect their meaning before running them.
-- Do not invent commands or change dependencies only to run checks.
-- When the project has no TypeScript configuration (for example a standalone
-  file), type-check the result with `tsc --strict --noEmit` (or
-  `bunx tsc --strict --noEmit`) instead of skipping verification.
-- Review names, nesting, type assertions, error paths, and scope after edits.
-- State which checks passed, failed, or could not be run.
-- Explain justified exceptions instead of silently weakening the standard.
-
-See [the full coding guidelines](references/typescript-guidelines.md) for
-MUST/SHOULD/AVOID rules, examples, and compiler/linter recommendations.

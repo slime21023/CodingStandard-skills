@@ -5,69 +5,51 @@ description: Apply clear, idiomatic Rust 2024+ Stable coding standards when crea
 
 # Rust Coding Guidelines
 
-Apply the following standards to Rust work. Follow explicit user requirements and existing supported project constraints first. For detailed edge cases, read `references/full-guidelines.md`.
+Apply these standards to Rust work. Follow explicit user requirements and supported project constraints first.
 
 ## Workflow
 
-1. Inspect relevant code, `Cargo.toml`, the project edition, MSRV, features, dependencies, and existing tests before changing anything.
-2. Make the smallest coherent change. Preserve public compatibility and established project conventions unless the requested task explicitly changes them.
-3. Use idiomatic Rust with clear, unambiguous names. Follow `rustfmt` rather than personal formatting preferences.
-4. Add or update focused tests. Run the applicable checks and report exactly which ones passed or could not run.
+1. Inspect relevant code and tests, Cargo.toml, edition, MSRV, features, and dependencies.
+2. Select topics from [the topic index](references/index.md) as described in Topic Retrieval.
+3. Make the smallest coherent change; respect conventions and public compatibility. Do not add speculative layers, abstractions, dependencies, or async.
+4. Use idiomatic, descriptive code. Add focused tests and explain new dependencies, unsafe invariants, runtime coupling, or public API changes.
+5. Run applicable checks and state what passed, what failed, and what could not run.
 
-## Language and organization
+## Rule Levels
 
-- For new projects, use Rust 2024 Edition and Stable Rust. Declare the actual supported `rust-version`; Rust 2024 requires at least Rust 1.85. Do not add nightly-only features.
-- Prefer `struct` / `enum` plus functions. Put type-specific behavior in `impl`. Keep modules small and capability-focused; do not add layered architectures or crates speculatively.
-- Default to private APIs; use `pub(crate)` for necessary crate-internal sharing and `pub` only for intentional external contracts.
-- Use standard naming: `PascalCase` for types, traits and variants, `snake_case` for modules/functions/variables, `SCREAMING_SNAKE_CASE` for constants. Avoid cryptic abbreviations.
-- Prefer early returns, `?`, and straightforward branches over deep nesting or overly long combinator chains.
+- **MUST**: Required; justify any exception.
+- **SHOULD**: The default; adjust only with a concrete reason.
+- **AVOID**: Not the default; use only when constraints justify it.
 
-## Ownership and abstraction
+## Core Rules
 
-- Borrow first: use `&T`, `&mut T`, `&str`, and `&[T]` where appropriate. Use owned `T`, `String`, or `Vec<T>` when data must be retained, transferred, or outlive the caller.
-- Do not clone merely to appease the borrow checker. Permit justified clones when they simplify correct lifetime or ownership design. Avoid complex lifetimes solely to eliminate allocations.
-- Prefer concrete types. Introduce traits, generics, `impl Trait`, or `dyn Trait` only for actual shared behavior, generic algorithms, extension contracts, or runtime polymorphism.
-- Prefer standard traits (`From`, `TryFrom`, `AsRef`, `Debug`, etc.) where they naturally express the API. Do not create one trait per struct or speculative mock abstractions.
-- Do not default to `Rc`, `Arc`, `RefCell`, or `Mutex` without a genuine shared-state or ownership requirement.
+- **MUST** Use Edition 2024, Stable Rust, and a declared MSRV of at least 1.85 for new projects; do not add nightly-only features.
+- **SHOULD** Prefer struct and enum with functions; keep APIs private by default.
+- **SHOULD** Borrow first and clone only for a clear ownership reason.
+- **SHOULD** Use concrete types before traits or generics.
+- **MUST** Use Result for recoverable failure and Option for absence; propagate clearly and avoid unwrap in ordinary production paths.
+- **SHOULD** Stay synchronous by default and let the application own any runtime.
+- **MUST** Document unsafe invariants with SAFETY comments; do not use unsafe to evade ownership.
+- **MUST** Do not cure compiler errors with gratuitous clones, shared locks, or unsafe.
+- **MUST** Run applicable formatting, Clippy, tests, and docs checks and report honestly.
 
-## Errors
+## Topic Retrieval
 
-- Use `Result<T, E>` for recoverable errors and `Option<T>` for normal absence; propagate with `?` and retain useful error sources.
-- Library public APIs expose meaningful typed errors. Prefer the standard library; use `thiserror` when deriving error implementations reduces meaningful boilerplate.
-- Application boundaries may use `anyhow` for contextual diagnostics. Do not unnecessarily leak `anyhow::Error` as a public library contract.
-- Never silently discard errors, flatten them all into strings, or hide failures through unconditional defaults.
-- Avoid `unwrap()` in production paths. Use `expect()` only for a justified invariant with a meaningful explanation; do not panic for normal user input or I/O failure.
+1. Open [references/index.md](references/index.md) and choose at most three topics by summary and tags.
+2. Read each selected topic's `Summary`, `Rules`, and `Checklist` first.
+3. Read `Recommended Pattern` when writing code, `Pitfalls` when reviewing or debugging, and `Tooling` or `Dependencies` when changing build or dependency setup.
+4. Follow `related` IDs only when the selected topics do not answer the task.
+5. Never load every topic file.
 
-## Async, concurrency, and unsafe
+## Extract Only What You Need
 
-- Use synchronous code by default. Choose async for substantial concurrent I/O, and suitable thread pools or parallel execution for CPU-bound work.
-- Let the application own its async runtime. Keep core library logic independent from a specific runtime when practical.
-- Bound concurrency and queues; establish task ownership, completion, cancellation, timeouts, and shutdown behavior. Prefer ownership transfer or channels to shared mutable state.
-- Do not hold synchronous mutex guards across `.await` or block an async executor with lengthy synchronous work.
-- Prefer Safe Rust. Use `unsafe` only for a justified low-level requirement. Minimize each block, explain soundness with `// SAFETY:`, document `unsafe fn` contracts under `# Safety`, and test/review the invariants.
-- Never use raw pointers, `transmute`, or `unsafe` to evade a normal ownership or type-design problem.
+If `mq` is available, run these from this skill's directory:
 
-## Tests, dependencies, and quality
+```shell
+mq -A 'section::by_title("Rules")' references/errors.md
+mq -A 'section::by_title("Checklist")' references/errors.md
+mq '.code("rust")' references/errors.md
+mq '.yaml | frontmatter | select(self, get("tags") | contains("errors")) | get("id")' references/*.md
+```
 
-- Test success cases, expected errors, and boundaries. Keep unit tests near code, integration tests under `tests/`, and useful public examples as doctests. Add regression tests for fixes.
-- In concurrency code, cover cancellation, completion, timeouts, and resource limits without fragile timing assumptions.
-- Prefer `std` before another crate; justify dependency scope, maintenance, license, MSRV, features, and transitive cost. Commit `Cargo.lock` by default; do not edit it manually.
-- Run, as applicable:
-
-  ```bash
-  cargo fmt --all -- --check
-  cargo clippy --workspace --all-targets -- -D warnings
-  cargo test --workspace
-  cargo doc --workspace --no-deps
-  ```
-
-- Verify relevant feature combinations separately. Use `--all-features` only when they can be enabled together. Validate claimed MSRV and additional targets when relevant.
-- Scoped lint exceptions require justification; never disable checks globally just to pass CI. Optimize performance only from relevant measurements.
-
-## Mandatory Code Agent conduct
-
-- Avoid unrequested refactors, speculative layers, excessive traits or generics, unnecessary crates, and `async` without a concrete requirement.
-- Favor descriptive names, shallow control flow, explicit error handling, and understandable types over terse or clever code.
-- Do not cure compiler errors with gratuitous `clone()`, `Arc<Mutex<_>>`, or `unsafe`.
-- Explain any new dependency, unsafe invariant, runtime coupling, or deliberate public API change.
-- Never claim formatting, Clippy, tests, or build passed unless actually executed; report limitations clearly.
+Without `mq`, open only the selected files or heading ranges. Do not install tools to read these references.

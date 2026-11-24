@@ -9,41 +9,48 @@ Follow the user's C++ Coding Guidelines v1.0: **simple, explicit, safe, readable
 
 ## Workflow
 
-1. Inspect relevant code, existing conventions, project constraints, toolchain, Module layout, dependencies, and tests.
-2. Identify data, behavior, invariants, ownership, lifetime, failure modes, and the smallest necessary public API.
-3. Implement the narrowest correct change, preferring the rules below. State the practical reason for exceptions.
-4. Format, build, test, and inspect diagnostics when available. For public Module changes, compile an importing consumer target.
-5. Report exactly which checks ran, their results, and any limitations. Never claim an unrun check passed.
+1. Inspect relevant code, project constraints, tests, and the compiler, generator, and module layout.
+2. Select topics from [the topic index](references/index.md) as described in Topic Retrieval.
+3. Identify data, invariants, ownership, lifetime, failure modes, and the smallest public API. Implement the narrowest correct change and state practical reasons for exceptions.
+4. Format, build, test, and inspect diagnostics as available. Compile an importing consumer for public module changes.
+5. Report the checks and outcomes, including any module-toolchain or third-party Expected checks you could not run.
 
-## Core rules
+## Rule Levels
 
-- **C++20 baseline:** Never require C++23-only facilities such as `std::expected` or assume `import std` is portable.
-- **Data and functions first:** Prefer `struct` for independent data and Free Functions for transformations and algorithms. Use `class` to maintain invariants, encapsulate mutable state, or own resources.
-- **Concrete types first:** Use Virtual Interfaces only for real runtime substitutability. Avoid speculative factories, one-implementation interfaces, unnecessary layers, and deep inheritance.
-- **Explicit ownership:** Prefer values, `std::vector`, and `std::array`. Use `std::unique_ptr` for necessary unique dynamic ownership and `std::shared_ptr` only for truly shared lifetime. Treat raw pointers as non-owning by default.
-- **RAII and lifetime:** Tie resources to owner objects. Do not return dangling references or preserve expired `std::span` / `std::string_view`. Prefer Rule of Zero.
-- **Errors:** Return a vetted, version-pinned third-party Expected for recoverable failures in C++20 (initial candidate: `tl::expected`). Reserve Exceptions for exceptional failures and existing API contracts. Never ignore errors.
-- **Modules first:** Use C++20 Named Modules for new project-defined interfaces and CMake `FILE_SET CXX_MODULES`. Use narrow Header/Adapter boundaries for third-party, C ABI, or toolchain constraints.
-- **Readability:** Name variables and functions fully, use early returns and braces, and keep side effects explicit. Avoid nested ternaries, excessive nesting, hidden magic, and needlessly dense code.
-- **Genericity:** Use Templates only for genuine multi-type requirements; prefer normal functions, standard facilities, and meaningful Concepts.
-- **Performance:** Pick sound algorithms and data layouts before optimization. Require measurements for complex allocators, pools, SIMD, or lock-free algorithms.
+- **MUST**: Required; justify any exception.
+- **SHOULD**: The default; adjust only with a concrete reason.
+- **AVOID**: Not the default; use only when constraints justify it.
 
-## Naming and API defaults
+## Core Rules
 
-| Element | Style |
-| --- | --- |
-| Type, struct, class | `PascalCase` |
-| Function, variable, namespace | `snake_case` |
-| Private member | `snake_case_` |
-| Named constant | `kPascalCase` |
-| Macro, when unavoidable | `UPPER_SNAKE_CASE` |
+- **MUST** **C++20 baseline:** Never require C++23-only facilities such as `std::expected` or assume `import std` is portable.
+- **SHOULD** **Data and functions first:** Prefer `struct` for independent data and Free Functions for transformations and algorithms. Use `class` to maintain invariants, encapsulate mutable state, or own resources.
+- **SHOULD** **Concrete types first:** Use Virtual Interfaces only for real runtime substitutability. Avoid speculative factories, one-implementation interfaces, unnecessary layers, and deep inheritance.
+- **MUST** **Explicit ownership:** Prefer values, `std::vector`, and `std::array`. Use `std::unique_ptr` for necessary unique dynamic ownership and `std::shared_ptr` only for truly shared lifetime. Treat raw pointers as non-owning by default.
+- **MUST** **RAII and lifetime:** Tie resources to owner objects. Do not return dangling references or preserve expired `std::span` / `std::string_view`. Prefer Rule of Zero.
+- **MUST** **Errors:** Return a vetted, version-pinned third-party Expected for recoverable failures in C++20 (initial candidate: `tl::expected`). Reserve Exceptions for exceptional failures and existing API contracts. Never ignore errors.
+- **MUST** **Modules first:** Use C++20 Named Modules for new project-defined interfaces and CMake `FILE_SET CXX_MODULES`. Use narrow Header/Adapter boundaries for third-party, C ABI, or toolchain constraints.
+- **SHOULD** **Readability:** Name variables and functions fully, use early returns and braces, and keep side effects explicit. Avoid nested ternaries, excessive nesting, hidden magic, and needlessly dense code.
+- **SHOULD** **Genericity:** Use Templates only for genuine multi-type requirements; prefer normal functions, standard facilities, and meaningful Concepts.
+- **SHOULD** **Performance:** Pick sound algorithms and data layouts before optimization. Require measurements for complex allocators, pools, SIMD, or lock-free algorithms.
 
-Use `const`, `nullptr`, `enum class`, `explicit`, and `[[nodiscard]]` when appropriate. Use `auto` when type clarity improves. Pass cheap values by value, read-only large values by `const T&`, mutating inputs by `T&`, and nullable non-owning objects by `T*`.
+## Topic Retrieval
 
-## Reference routing
+1. Open [references/index.md](references/index.md) and choose at most three topics by summary and tags.
+2. Read each selected topic's `Summary`, `Rules`, and `Checklist` first.
+3. Read `Recommended Pattern` when writing code, `Pitfalls` when reviewing or debugging, and `Tooling` or `Dependencies` when changing build or dependency setup.
+4. Follow `related` IDs only when the selected topics do not answer the task.
+5. Never load every topic file.
 
-- **Before substantial C++ implementation/review:** Read [references/guidelines.md](references/guidelines.md), containing all 36 rules and checklist.
-- **Before Modules, CMake, public interface, or toolchain work:** Read [references/modules.md](references/modules.md).
-- **Before Expected, Exceptions, constructors, ownership or lifetime-sensitive APIs:** Read [references/errors-and-ownership.md](references/errors-and-ownership.md).
+## Extract Only What You Need
 
-Apply relevant references without adding unnecessary dependencies or broadening the task. Explicitly note when Modules compilation or a third-party Expected API cannot be verified in the available environment.
+If `mq` is available, run these from this skill's directory:
+
+```shell
+mq -A 'section::by_title("Rules")' references/errors.md
+mq -A 'section::by_title("Checklist")' references/errors.md
+mq '.code("cpp")' references/errors.md
+mq '.yaml | frontmatter | select(self, get("tags") | contains("errors")) | get("id")' references/*.md
+```
+
+Without `mq`, open only the selected files or heading ranges. Do not install tools to read these references.

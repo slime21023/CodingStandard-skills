@@ -17,6 +17,8 @@ how to write, refactor, test, and review code in one language.
 | `rust-coding-guidelines` | Rust 2024+ | Explicit borrowing, concrete types, minimal APIs, traits, unsafe code, async/concurrency |
 | `testing-principles` | Any | Language-agnostic testing: when tests are required, what to cover, deterministic design, test doubles, honest reporting |
 
+Each skill ships one-topic-per-file references under `references/`, queryable with mq.
+
 ## Installation
 
 Install every skill in this repository:
@@ -44,17 +46,36 @@ bunx skills add slime21023/CodingStandard-skills --list
 ```text
 skills/
   <skill-name>/
-    SKILL.md          # Entry point: frontmatter (name, description) + workflow
-    references/       # Optional: detailed guidelines loaded on demand
-    agents/           # Optional: agent interface metadata (openai.yaml)
-    assets/           # Optional: icons and other static files
+    SKILL.md
+    references/
+      index.md
+      <topic>.md
+    agents/
+    assets/           # Optional
+templates/topic.md
+scripts/check-topics.sh
+CONTRIBUTING.md
+AGENTS.md
 ```
+
+## Query Topics with mq
+
+Install [`mq`](https://github.com/harehare/mq) to query topics from the repository root. It is optional for using a skill. To find the error-handling topic for each language and read the Rust example:
+
+```bash
+mq '.yaml | frontmatter | select(self, get("topic") == "errors") | get("id")' skills/*/references/*.md
+mq -A 'section::by_title("Recommended Pattern")' skills/rust-coding-guidelines/references/errors.md
+```
+
+See [the mq recipes](AGENTS.md#mq-queries) for PowerShell and queries by tag and section. `bash scripts/check-topics.sh` validates document structure; snippets are marked `unverified` because it does not compile them.
 
 ## Adding a Skill
 
 1. Create `skills/<skill-name>/SKILL.md` with frontmatter containing `name`
    (matching the directory) and `description` (when the skill should trigger).
-2. Put long-form rules in `references/` and link to them from `SKILL.md`.
+2. Create topics from [`templates/topic.md`](templates/topic.md) per
+   [`CONTRIBUTING.md`](CONTRIBUTING.md), list them in `references/index.md`,
+   and run `bash scripts/check-topics.sh`.
 3. Verify discovery with `bunx skills add . --list`.
 
 ## Rule Levels
@@ -64,3 +85,4 @@ The skills share a common vocabulary:
 - **MUST**: required; exceptions need a justification.
 - **SHOULD**: the default; adjust only with a concrete reason.
 - **AVOID**: not the default; use only when constraints justify it.
+- **REVIEW SIGNAL**: a readability prompt for review, never a violation or a numeric limit.
