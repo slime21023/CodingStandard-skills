@@ -21,25 +21,95 @@ Each skill ships one-topic-per-file references under `references/`, queryable wi
 
 ## Installation
 
-Install every skill in this repository:
+### 1. Interactive Selection (互動式勾選安裝)
+
+In an interactive terminal, `bunx skills add` launches an interactive menu to choose which skills and target agents to install:
+
+```bash
+# Remote install from GitHub
+bunx skills add slime21023/CodingStandard-skills
+
+# Local install (from inside this repo)
+bun run install:skills
+# or
+bunx skills add .
+```
+
+You will be prompted to:
+1. **Select skills**: Toggle specific skills (`Space` to toggle, `Enter` to confirm).
+2. **Select agents**: Choose target AI agents (Claude Code, Cursor, Windsurf, Codex, Antigravity, GitHub Copilot, etc.).
+3. **Scope**: Choose between `Project` (`.agents/skills/`) or `Global` (`~/.<agent>/skills/`).
+
+> **Note for AI IDE Terminals (Cursor, Antigravity, etc.)**:
+> When running inside an AI Agent environment, the default `skills` CLI auto-detects the agent and switches to non-interactive mode (auto-installing all skills). Run `bun run install:skills` or use the CLI flags below to force specific selections.
+
+---
+
+### 2. Selective Installation via Flags (指定特定 Skill 與 Agent)
+
+Install specific skills:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines python-coding-guidelines
+```
+
+Install to specific agents:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills -a claude-code cursor
+```
+
+Install globally across all projects:
+
+```bash
+bunx skills add slime21023/CodingStandard-skills -g
+```
+
+Install every skill while keeping agent selection in an interactive terminal:
 
 ```bash
 bunx skills add slime21023/CodingStandard-skills --skill '*'
 ```
 
-Install a single skill:
+Install all skills to all agents non-interactively:
 
 ```bash
-bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines
+bunx skills add slime21023/CodingStandard-skills --all
 ```
 
-List the skills without installing:
+---
+
+### 3. List Available Skills (列出可用 Skills)
+
+Preview skills and their descriptions without installing:
 
 ```bash
 bunx skills add slime21023/CodingStandard-skills --list
+# or locally
+bun run skills:list
 ```
 
-`npx skills add` works the same way.
+`npx skills add` works identically if using Node.js / npm.
+
+---
+
+## Repository Scripts
+
+If you cloned this repository locally:
+
+```bash
+# Interactive skill & agent installer (cleans IDE agent flags)
+bun run install:skills
+
+# Validate all skills (frontmatter, naming, and link integrity)
+bun run validate
+
+# Validate topic structure (see CONTRIBUTING.md for prerequisites)
+python3 scripts/check_topics.py
+
+# List all available skills
+bun run skills:list
+```
 
 ## Repository Layout
 
@@ -52,8 +122,13 @@ skills/
       <topic>.md
     agents/
     assets/           # Optional
+scripts/
+  install.mjs
+  validate.mjs
+  check_topics.py
 templates/topic.md
-scripts/check_topics.py
+package.json
+.gitignore
 CONTRIBUTING.md
 AGENTS.md
 ```
@@ -76,7 +151,8 @@ See [the mq recipes](AGENTS.md#mq-queries) for PowerShell and queries by tag and
 2. Create topics from [`templates/topic.md`](templates/topic.md) per
    [`CONTRIBUTING.md`](CONTRIBUTING.md), list them in `references/index.md`,
    and run the [topic checker](CONTRIBUTING.md#checking-topics).
-3. Verify discovery with `bunx skills add . --list`.
+3. Run `bun run validate` to check skill metadata and links, then verify
+   discovery with `bun run skills:list`.
 
 ## Rule Levels
 

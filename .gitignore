@@ -1,0 +1,15 @@
+# Installed agent skills and lockfile
+.agents/
+skills-lock.json
+
+# Dependencies
+node_modules/
+
+# Logs and environment
+*.log
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db

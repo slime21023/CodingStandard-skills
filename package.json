@@ -1,0 +1,41 @@
+{
+  "name": "@slime21023/coding-standard-skills",
+  "version": "1.0.0",
+  "description": "Agent skills that encode team coding standards for multiple programming languages",
+  "type": "module",
+  "main": "scripts/install.mjs",
+  "bin": {
+    "coding-skills": "./scripts/install.mjs",
+    "skills-installer": "./scripts/install.mjs"
+  },
+  "scripts": {
+    "skills": "bun run ./scripts/install.mjs",
+    "install:skills": "bun run ./scripts/install.mjs",
+    "skills:list": "bun run ./scripts/install.mjs --list",
+    "skills:sync": "bunx skills experimental_sync",
+    "validate": "bun run ./scripts/validate.mjs"
+  },
+  "keywords": [
+    "skills",
+    "agent-skills",
+    "ai-agents",
+    "coding-standards",
+    "skills.sh",
+    "cursor",
+    "claude-code",
+    "windsurf",
+    "codex",
+    "antigravity"
+  ],
+  "author": "KevinChueh <slime21023@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slime21023/CodingStandard-skills.git"
+  },
+  "files": [
+    "skills",
+    "scripts",
+    "README.md"
+  ]
+}
