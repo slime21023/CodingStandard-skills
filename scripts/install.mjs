@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -72,8 +73,22 @@ if (!hasSource) {
 
 finalArgs.push(...args);
 
-// Determine runner: prefer bunx if available, fallback to npx
-const runner = process.versions.bun ? 'bunx' : (process.platform === 'win32' ? 'npx.cmd' : 'npx');
+let runner = process.versions.bun ? 'bunx' : 'npx';
+if (runner === 'npx' && process.platform === 'win32') {
+  // Windows cannot spawn npx.cmd directly. Run npm's JS launcher without a shell.
+  const nodeDir = path.dirname(process.execPath);
+  const npxCli = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npx-cli.js');
+  if (!existsSync(npxCli)) {
+    console.error('Cannot find bundled npm. Install Node.js with npm or use bun run install:skills.');
+    process.exit(1);
+  }
+  runner = process.execPath;
+  finalArgs.unshift(npxCli);
+  // Use the same Node executable when npm's package shim launches the CLI.
+  const pathKey = Object.keys(cleanEnv).find(key => key.toUpperCase() === 'PATH') ?? 'Path';
+  const inheritedPath = cleanEnv[pathKey];
+  cleanEnv[pathKey] = inheritedPath ? `${nodeDir}${path.delimiter}${inheritedPath}` : nodeDir;
+}
 
 const child = spawn(runner, finalArgs, {
   stdio: 'inherit',

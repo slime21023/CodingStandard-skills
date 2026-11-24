@@ -31,7 +31,9 @@ bunx skills add slime21023/CodingStandard-skills
 
 # Local install (from inside this repo)
 bun run install:skills
-# or
+# or with Node.js 22.20+ and bundled npm
+node scripts/install.mjs
+# or call the CLI directly
 bunx skills add .
 ```
 
@@ -95,9 +97,13 @@ Preview skills and their descriptions without installing:
 bunx skills add slime21023/CodingStandard-skills --list
 # or locally
 bun run skills:list
+# or locally with Node.js
+node scripts/install.mjs --list
 ```
 
-`npx skills add` works identically if using Node.js / npm.
+For direct CLI calls, `npx skills add <source>` is the Node.js alternative to
+`bunx skills add <source>`. The local wrapper defaults to this repository when
+you omit `<source>`.
 
 ---
 
