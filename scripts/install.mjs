@@ -3,6 +3,7 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,8 +38,32 @@ for (const envVar of AGENT_ENV_VARS) {
 
 const args = process.argv.slice(2);
 
-// Check if source was provided; default to local root if no source specified
-const hasSource = args.some(arg => !arg.startsWith('-'));
+// Match skills add's value-taking options; keep the original arguments for the CLI.
+const { tokens } = parseArgs({
+  args,
+  options: {
+    agent: { type: 'string', short: 'a' },
+    skill: { type: 'string', short: 's' },
+    subagent: { type: 'string' },
+    metadata: { type: 'string' },
+    rename: { type: 'string' },
+  },
+  strict: false,
+  tokens: true,
+});
+const listOptions = new Set(['agent', 'skill', 'subagent']);
+let hasSource = false;
+for (let i = 0; i < tokens.length; i++) {
+  const token = tokens[i];
+  if (token.kind === 'positional' && token.value) {
+    hasSource = true;
+    break;
+  }
+  if (token.kind === 'option' && !token.inlineValue && token.value &&
+      !token.value.startsWith('-') && listOptions.has(token.name)) {
+    while (tokens[i + 1]?.kind === 'positional') i++;
+  }
+}
 const finalArgs = ['skills', 'add'];
 
 if (!hasSource) {

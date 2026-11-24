@@ -53,6 +53,14 @@ Install specific skills:
 bunx skills add slime21023/CodingStandard-skills --skill go-coding-guidelines python-coding-guidelines
 ```
 
+From a local checkout, omit the source to install skills from this repository:
+
+```bash
+bun run install:skills --skill go-coding-guidelines python-coding-guidelines
+```
+
+To use a different source with the wrapper, pass it before the flags.
+
 Install to specific agents:
 
 ```bash
@@ -110,6 +118,8 @@ python3 scripts/check_topics.py
 # List all available skills
 bun run skills:list
 ```
+
+On Windows, run `py -3 scripts/check_topics.py` instead of the `python3` command.
 
 ## Repository Layout
 
